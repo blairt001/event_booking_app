@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const graphqlHttp = require('express-graphql');
 const { buildSchema} = require('graphql');
-
+const mongoose = require('mongoose');
+const { MongoClient } = require("mongodb");
 
 const app = express();
 const events = [];
@@ -63,11 +64,25 @@ app.use('/graphql',
             return event;
         }
     },
-    graphiql: true      
+    graphiql: true,
 })
 );
+
+// I have decided to use mongoose although MongoClient is the new recommended way , it is commented below
+// use backtick for creating a template literal to be able to dynamically change your username and password
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-qdpxb.mongodb.net/test?retryWrites=true`, { useNewUrlParser: true })
+.then(() => app.listen(4000)).catch(err => {
+    console.log(err);
+});
+
+// MongoClient.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-qdpxb.mongodb.net/test?retryWrites=true`, { useNewUrlParser: true })
+// .then(() => app.listen(4000)).catch(err => {
+//     console.log(err);
+// }) 
 
 // app.get('/', (req, res, next) => {
 //     res.send('Hello Tony');
 // })
-app.listen(4000);
+// app.listen(4000);
+
+ 
